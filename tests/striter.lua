@@ -32,3 +32,21 @@ assert(
 	type(striter.new(io.open("striter.lua"))) == "table",
 	"Could not create a striter from an open file."
 )
+
+------------------------------------------------
+-- Check that data is iterated over correctly --
+------------------------------------------------
+
+local data = "striter is cool"
+local iter = striter.new(io.open("resources/striter.txt"))
+local index = 1
+local char = iter:next()
+while char do
+	assert(data:sub(index) == char, "Next returned an invalid value.")
+	index = index + 1
+	char = iter:next()
+end
+
+for i=1, 100 do
+	assert(iter:next() == nil, "Next returned a char after EOF.")
+end
