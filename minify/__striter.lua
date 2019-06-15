@@ -13,8 +13,8 @@ function m.new(arg)
 	end
 
 	local self = setmetatable({}, m)
-	self.__index = 1
-	self.__string = string
+	self.__index = 0
+	self.__string = arg
 	return self
 end
 
@@ -23,7 +23,7 @@ function m:next()
 	if self.__index > #self.__string then
 		return nil
 	end
-	return self.__string:sub(self.__index)
+	return self.__string:sub(self.__index, self.__index)
 end
 
 return m

@@ -37,12 +37,12 @@ assert(
 -- Check that data is iterated over correctly --
 ------------------------------------------------
 
-local data = "striter is cool"
+local data = "striter is cool\n"
 local iter = striter.new(io.open("resources/striter.txt"))
 local index = 1
 local char = iter:next()
 while char do
-	assert(data:sub(index) == char, "Next returned an invalid value.")
+	assert(data:sub(index,index) == char, "Next returned an invalid value.")
 	index = index + 1
 	char = iter:next()
 end
