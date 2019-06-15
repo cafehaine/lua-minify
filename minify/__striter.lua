@@ -20,10 +20,17 @@ end
 
 function m:next()
 	self.__index = self.__index + 1
-	if self.__index > #self.__string then
-		return nil
+	local value = self.__string:sub(self.__index, self.__index)
+	return #value ~= 0 and value or nil
+end
+
+function m:peek(n)
+	if n == nil then
+		n = 1
 	end
-	return self.__string:sub(self.__index, self.__index)
+
+	local value = self.__string:sub(self.__index, self.__index+n)
+	return #value ~= 0 and value or nil
 end
 
 return m

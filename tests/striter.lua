@@ -50,3 +50,16 @@ end
 for i=1, 100 do
 	assert(iter:next() == nil, "Next returned a char after EOF.")
 end
+
+-------------------
+-- Check peek(n) --
+-------------------
+
+data = "abcdef"
+iter = striter.new(data)
+assert(iter:peek(2) == "ab", "Peek returned an invalid value")
+assert(iter:peek() == "a", "Peek returned an invalid value")
+assert(iter:peek(7) == "abcdef", "Peek returned an invalid value")
+while iter:next() do end
+assert(iter:peek() == nil, "Peek returned a value after EOF.")
+assert(iter:peek(20) == nil, "Peek returned a value after EOF.")
