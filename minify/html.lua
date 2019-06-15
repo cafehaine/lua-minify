@@ -2,6 +2,16 @@ local striter = require("minify.__striter")
 
 local m = {}
 
+local patterns = {
+	space = "[ \t]"
+}
+
+local function skip_space(iter)
+	while iter:peek():match(patterns.space) do
+		iter:next()
+	end
+end
+
 local function handle_tag(output, iter)
 	-- Comment tag
 	if iter:peek(3) == "!--" then
@@ -33,6 +43,10 @@ function m.minify(arg)
 	while char do
 		if char == "<" then
 			handle_tag(output, iter)
+		elseif char:match(patterns.space) then
+			skip_space(iter)
+		else
+			--TODO handle text
 		end
 		char = iter:next()
 	end
