@@ -10,7 +10,7 @@ local function handle_tag(output, iter)
 		end
 
 	-- Doctype tag
-	elseif iter:peek(8) == "!DOCTYPE" then
+	elseif iter:peek(8):lower() == "!doctype" then
 		while not iter:peek() == ">" and iter:peek() ~= nil do
 			iter:next()
 		end
