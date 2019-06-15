@@ -30,3 +30,13 @@ assert(
 	html.minify("<p> spaces  ?</p>") == "<p>spaces ?</p>",
 	"html.minify left some useless spaces."
 )
+
+assert(
+	html.minify("<html  lang='fr'   >") == "<html lang='fr'>",
+	"html.minify left some spaces between attributes."
+)
+
+assert(
+	html.minify("<img src='' alt=''/>") == "<img src='' alt=''>",
+	"html.minify left the closing / on an empty element."
+)
