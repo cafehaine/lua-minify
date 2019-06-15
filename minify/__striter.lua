@@ -29,7 +29,7 @@ function m:peek(n)
 		n = 1
 	end
 
-	local value = self.__string:sub(self.__index, self.__index+n)
+	local value = self.__string:sub(self.__index+1, self.__index+n)
 	return #value ~= 0 and value or nil
 end
 
