@@ -3,7 +3,8 @@ local striter = require("minify.__striter")
 local m = {}
 
 local patterns = {
-	space = "[ \t]"
+	space = "[ \t]",
+	element = "[%a%d%-_%.]"
 }
 
 local function skip_space(iter)
@@ -26,13 +27,78 @@ local function handle_tag(output, iter)
 		end
 		output[#output+1] = "<!DOCTYPE html>"
 
-	-- Preformated text tag
-	elseif iter:peek(3) == "pre" then
-		--TODO
+	-- Closing tag
+	elseif iter:peek() == "/" then
+		iter:next() -- skip '/'
+		local name = ""
+		local char = iter:next()
+		while char ~= nil and char:match(patterns.element) do
+			name = name .. char
+			char = iter:next()
+		end
+		-- skip spaces or invalid stuff
+		while char ~= nil and char ~= ">" do
+			char = iter:next()
+		end
+		output[#output+1] = "</"..name..">"
 
 	-- Other tags
 	else
-		--TODO
+		local name = ""
+		local attributes = {}
+		local char = iter:next()
+		-- Get element name
+		while char ~= nil and char:match(patterns.element) do
+			name = name..char
+			char = iter:next()
+		end
+		-- Get the attributes if any
+		while char ~= nil and char ~= ">" and char ~= "/" do
+			if char:match(patterns.space) then
+				skip_space(iter)
+			end
+			char = iter:next()
+			local attr = ""
+			-- Read attribute
+			while char:match(patterns.element) do
+				attr = attr..char
+				char = iter:next()
+			end
+			-- attribute might be boolean, check if there is an '='
+			local value
+			if char == "=" then
+				char = iter:next()
+				opening = char
+				value = opening
+				char = iter:next()
+				while char ~= nil and char ~= opening do
+					value = value..char
+					char = iter:next()
+				end
+				value = value..char
+			end
+			if attr ~= "" then
+				attributes[#attributes+1] = {attr, value}
+			end
+			char = iter:next()
+		end
+		if #attributes == 0 then
+			output[#output+1] = "<"..name..">"
+		else
+			output[#output+1] = "<"..name
+			for _,kvp in ipairs(attributes) do
+				if kvp[2] then
+					output[#output+1] = " "..kvp[1].."="..kvp[2]
+				else
+					output[#output+1] = " "..kvp[1]
+				end
+			end
+			output[#output+1] = ">"
+		end
+		-- If element is pre, read all data until closing pre tag.
+		if name:lower() == "pre" then
+			--TODO
+		end
 	end
 end
 
