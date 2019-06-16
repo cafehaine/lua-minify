@@ -4,39 +4,39 @@ local html = require("minify.html")
 -- Check that we can at least run minify on basic strings --
 ------------------------------------------------------------
 
-assert(html.minify("") == "", "html.minify didn't return an empty string.")
+test(html.minify("") == "", "html.minify didn't return an empty string.")
 
-assert(
+test(
 	html.minify("<!DOCTYPE html>") == "<!DOCTYPE html>",
 	"html.minify stripped the doctype."
 )
 
-assert(
+test(
 	html.minify("<!-- This is a comment -->") == "",
 	"html.minify didn't strip a comment."
 )
 
-assert(
+test(
 	html.minify("<html> <head> </head> </html>") == "<html><head></head></html>",
 	"html.minify left some useless spaces."
 )
 
-assert(
+test(
 	html.minify("<pre>  spaces ! </pre>") == "<pre>  spaces ! </pre>",
 	"html.minify stripped some spaces from a <pre> tag."
 )
 
-assert(
+test(
 	html.minify("<p> spaces  ?</p>") == "<p>spaces ?</p>",
 	"html.minify left some useless spaces."
 )
 
-assert(
+test(
 	html.minify("<html  lang='fr'   >") == "<html lang='fr'>",
 	"html.minify left some spaces between attributes."
 )
 
-assert(
+test(
 	html.minify("<img src='' alt=''/>") == "<img src='' alt=''>",
 	"html.minify left the closing / on an empty element."
 )
