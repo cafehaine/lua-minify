@@ -31,7 +31,7 @@ local function run_test(to_test)
 	return failed
 end
 
-local tests = {"striter","html"}
+local tests = {"striter","common","html"}
 local total_failed = 0
 
 for i=1, #tests do
