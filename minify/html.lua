@@ -1,4 +1,5 @@
 local striter = require("minify.__striter")
+local common = require("minify.common")
 
 local m = {}
 
@@ -11,6 +12,23 @@ local function skip_space(iter)
 	while iter:peek():match(patterns.space) do
 		iter:next()
 	end
+end
+
+local function parse_argument(iter)
+	local char
+	local attr = ""
+	-- Read attribute
+	repeat
+		char = iter:next()
+		attr = attr..char
+	until(not iter:peek():match(patterns.element))
+	-- attribute might be boolean, check if there is an '='
+	local value
+	if iter:peek() == "=" then
+		iter:next()
+		value = common.parse_string(iter, true)
+	end
+	return attr, value
 end
 
 local function handle_tag(output, iter)
@@ -57,28 +75,9 @@ local function handle_tag(output, iter)
 			if char:match(patterns.space) then
 				skip_space(iter)
 			end
-			char = iter:next()
-			local attr = ""
-			-- Read attribute
-			while char:match(patterns.element) do
-				attr = attr..char
-				char = iter:next()
-			end
-			-- attribute might be boolean, check if there is an '='
-			local value
-			if char == "=" then
-				char = iter:next()
-				opening = char
-				value = opening
-				char = iter:next()
-				while char ~= nil and char ~= opening do
-					value = value..char
-					char = iter:next()
-				end
-				value = value..char
-			end
-			if attr ~= "" then
-				attributes[#attributes+1] = {attr, value}
+			if iter:peek():match(patterns.element) then
+				local attr, val = parse_argument(iter)
+				attributes[#attributes+1] = {attr, val}
 			end
 			char = iter:next()
 		end
