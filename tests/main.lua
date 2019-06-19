@@ -14,7 +14,9 @@ local function run_test(to_test)
 	function compare(value, expected, err)
 		test_count = test_count + 1
 		if value ~= expected then
-			print(err)
+			if err then
+				print(err)
+			end
 			print(("Expected %q, got %q"):format(expected, value))
 			failed = failed + 1
 		end
