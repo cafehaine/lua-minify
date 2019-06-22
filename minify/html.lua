@@ -4,7 +4,7 @@ local common = require("minify.common")
 local m = {}
 
 local patterns = {
-	space = "[ \t]",
+	space = "[ \t\n]",
 	element = "[%a%d%-_%.]"
 }
 
@@ -35,6 +35,29 @@ local function parse_argument(iter)
 	end
 
 	return attr, value
+end
+
+local function handle_pre(iter)
+	local output = {}
+	local done = false
+	local char = iter:next()
+	while char and not done do
+		if char == "<" then
+			if iter:peek(4):lower() == "/pre" then
+				while char and char ~= ">" do
+					char = iter:next()
+				end
+				output[#output+1] = "</pre>"
+				done = true
+			else
+				handle_tag(output, iter)
+			end
+		else
+			output[#output+1] = char
+			char = iter:next()
+		end
+	end
+	return table.concat(output)
 end
 
 local function handle_tag(output, iter)
@@ -102,7 +125,8 @@ local function handle_tag(output, iter)
 		end
 		-- If element is pre, read all data until closing pre tag.
 		if name:lower() == "pre" then
-			--TODO
+			output[#output+1] = handle_pre(iter)
+
 		-- If element is a style element, read the content and pass it
 		-- to the CSS minifier
 		elseif name:lower() == "style" then
