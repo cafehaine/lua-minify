@@ -41,3 +41,18 @@ compare(
 	html.minify("<img src='' alt=''/>"), "<img src='' alt=''>",
 	"html.minify left the closing / on an empty element."
 )
+
+-------------------------------
+-- Check for css integration --
+-------------------------------
+
+compare(
+	html.minify("<style> p { color: red;} </style>"),
+	"<style>p{color:red;}</style>",
+	"html.minify didn't handle properly a style element."
+)
+
+compare(
+	html.minify("<p style=' color : red; '>"), "<p style='color:red;'>",
+	"html.minify didn't handle properly a style attribute."
+)
