@@ -26,7 +26,7 @@ local function parse_argument(iter)
 	local value
 	if iter:peek() == "=" then
 		iter:next()
-		value = common.parse_string(iter, true)
+		value = common.parse_string_no_escape(iter)
 	end
 	return attr, value
 end
