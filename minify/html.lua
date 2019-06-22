@@ -28,6 +28,12 @@ local function parse_argument(iter)
 		iter:next()
 		value = common.parse_string_no_escape(iter)
 	end
+
+	-- If the attribute is a style attribute, pass it to the CSS minifier
+	if attr:lower() == "style" then
+		--TODO
+	end
+
 	return attr, value
 end
 
@@ -96,6 +102,10 @@ local function handle_tag(output, iter)
 		end
 		-- If element is pre, read all data until closing pre tag.
 		if name:lower() == "pre" then
+			--TODO
+		-- If element is a style element, read the content and pass it
+		-- to the CSS minifier
+		elseif name:lower() == "style" then
 			--TODO
 		end
 	end
