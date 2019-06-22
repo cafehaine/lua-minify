@@ -6,6 +6,7 @@ local function run_test(to_test)
 	function test(arg, err)
 		test_count = test_count + 1
 		if not arg then
+			print(("\nTest %d failed:"):format(test_count))
 			print(err)
 			failed = failed + 1
 		end
@@ -14,6 +15,7 @@ local function run_test(to_test)
 	function compare(value, expected, err)
 		test_count = test_count + 1
 		if value ~= expected then
+			print(("\nTest %d failed:"):format(test_count))
 			if err then
 				print(err)
 			end
@@ -24,9 +26,9 @@ local function run_test(to_test)
 
 	dofile(to_test..".lua")
 	if failed > 0 then
-		print(("%d failed tests out of %d (%.1f%%)"):format(failed, test_count, failed/test_count*100))
+		print(("\n%d failed tests out of %d (%.1f%%)"):format(failed, test_count, failed/test_count*100))
 	else
-		print(("Passed %d tests successfully"):format(test_count))
+		print(("\nPassed %d tests successfully"):format(test_count))
 	end
 	return failed
 end
