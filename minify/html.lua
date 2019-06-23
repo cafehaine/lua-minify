@@ -72,6 +72,24 @@ local function handle_pre(iter)
 	return table.concat(output)
 end
 
+--- Handle a closing tag.
+-- @tparam striter iter the iterator
+-- @treturn string the closing tag
+local function handle_closing(iter)
+	iter:next() -- skip '/'
+	local name = ""
+	local char = iter:next()
+	while char ~= nil and char:match(patterns.element) do
+		name = name .. char
+		char = iter:next()
+	end
+	-- skip spaces or invalid stuff
+	while char and char ~= ">" do
+		char = iter:next()
+	end
+	return "</"..name..">"
+end
+
 --- Parse a tag.
 -- Deletes all comments, compacts spaces, and calls specific functions when
 -- needed.
@@ -94,18 +112,7 @@ local function handle_tag(output, iter)
 
 	-- Closing tag
 	elseif iter:peek() == "/" then
-		iter:next() -- skip '/'
-		local name = ""
-		local char = iter:next()
-		while char ~= nil and char:match(patterns.element) do
-			name = name .. char
-			char = iter:next()
-		end
-		-- skip spaces or invalid stuff
-		while char ~= nil and char ~= ">" do
-			char = iter:next()
-		end
-		output[#output+1] = "</"..name..">"
+		output[#output+1] = handle_closing(iter)
 
 	-- Other tags
 	else
