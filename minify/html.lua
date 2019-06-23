@@ -97,17 +97,23 @@ end
 -- @tparam table output the output buffer
 -- @tparam striter iter the iterator
 local function handle_tag(output, iter)
+	local char
 	-- Comment tag
 	if iter:peek(3) == "!--" then
-		while not iter:peek(3) == "-->" and iter:peek() ~= nil do
+		while iter:peek() and iter:peek(3) ~= "-->" do
 			iter:next()
 		end
+		iter:next()
+		iter:next()
+		iter:next()
 
 	-- Doctype tag
 	elseif iter:peek(8):lower() == "!doctype" then
-		while not iter:peek() == ">" and iter:peek() ~= nil do
-			iter:next()
+		char = iter:next()
+		while char and char ~= ">" do
+			char = iter:next()
 		end
+		iter:next()
 		output[#output+1] = "<!DOCTYPE html>"
 
 	-- Closing tag
@@ -118,14 +124,14 @@ local function handle_tag(output, iter)
 	else
 		local name = ""
 		local attributes = {}
-		local char = iter:next()
+		char = iter:next()
 		-- Get element name
 		while char ~= nil and char:match(patterns.element) do
 			name = name..char
 			char = iter:next()
 		end
 		-- Get the attributes if any
-		while char ~= nil and char ~= ">" and char ~= "/" do
+		while char ~= nil and char ~= ">" do
 			if char:match(patterns.space) then
 				skip_space(iter)
 			end
@@ -174,7 +180,7 @@ function m.minify(arg)
 		elseif char:match(patterns.space) then
 			skip_space(iter)
 		else
-			--TODO handle text
+			output[#output+1] = char
 		end
 		char = iter:next()
 	end
