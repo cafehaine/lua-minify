@@ -1,5 +1,14 @@
+---
+-- The common module.
+-- Some functions shared between the other modules.
+---
+
 local m = {}
 
+--- Parse a string that doesn't handle escaping.
+-- @function common.parse_string_no_escape
+-- @tparam striter iter the iterator
+-- @treturn string the string
 function m.parse_string_no_escape(iter)
 	local opening_char = iter:next()
 	local output = {opening_char}
@@ -12,6 +21,10 @@ function m.parse_string_no_escape(iter)
 	return table.concat(output)
 end
 
+--- Parse a string that handles escaping.
+-- @function common.parse_string
+-- @tparam striter iter the iterator
+-- @treturn string the string
 function m.parse_string(iter)
 	local opening_char = iter:next()
 	local output = {opening_char}

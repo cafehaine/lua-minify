@@ -1,3 +1,6 @@
+---
+-- The internal html minifier module
+--
 local striter = require("minify.__striter")
 local common = require("minify.common")
 
@@ -8,12 +11,18 @@ local patterns = {
 	element = "[%a%d%-_%.]"
 }
 
+--- Go through the striter until the next non-space character.
+-- @tparam striter iter the iterator
 local function skip_space(iter)
 	while iter:peek():match(patterns.space) do
 		iter:next()
 	end
 end
 
+--- Parse an argument.
+-- @tparam striter iter the iterator
+-- @treturn string the argument's name
+-- @treturn string|nil the argument's value
 local function parse_argument(iter)
 	local char
 	local attr = ""
@@ -37,6 +46,9 @@ local function parse_argument(iter)
 	return attr, value
 end
 
+--- Take all the data between two pre tags.
+-- @tparam striter iter the iterator
+-- @treturn string the data including the closing pre tag
 local function handle_pre(iter)
 	local output = {}
 	local done = false
@@ -60,6 +72,12 @@ local function handle_pre(iter)
 	return table.concat(output)
 end
 
+--- Parse a tag.
+-- Deletes all comments, compacts spaces, and calls specific functions when
+-- needed.
+-- Outputs the parsed data in a table.
+-- @tparam table output the output buffer
+-- @tparam striter iter the iterator
 local function handle_tag(output, iter)
 	-- Comment tag
 	if iter:peek(3) == "!--" then
@@ -135,6 +153,10 @@ local function handle_tag(output, iter)
 	end
 end
 
+--- Minify an html string or file.
+-- @function html.minify
+-- @tparam string|file arg the data to minify
+-- @treturn string the minified data
 function m.minify(arg)
 	local iter = striter.new(arg)
 	local output = {}

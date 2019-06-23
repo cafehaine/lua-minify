@@ -1,6 +1,17 @@
+---
+-- The internal __striter module.
+-- It allows creating striter objects, which can be used to iterate through a
+-- string.
+-- @classmod striter
+---
+
 local m = {}
 m.__index = m
 
+--- Create a new striter object.
+-- @function __striter.new
+-- @tparam string|file arg the source of data for the striter
+-- @treturn striter the striter object
 function m.new(arg)
 	if io.type(arg) == "file" then
 		local file = arg
@@ -18,12 +29,19 @@ function m.new(arg)
 	return self
 end
 
+--- Advance a character in the iterator
+-- @function striter:next
+-- @treturn string|nil the next character
 function m:next()
 	self.__index = self.__index + 1
 	local value = self.__string:sub(self.__index, self.__index)
 	return #value ~= 0 and value or nil
 end
 
+--- Peek the next characters
+-- @function striter:peek
+-- @tparam[opt] int n the characters to peek (default is 1)
+-- @treturn string|nil the peeked characters
 function m:peek(n)
 	if n == nil then
 		n = 1
