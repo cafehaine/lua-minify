@@ -93,10 +93,11 @@ end
 --- Parse a tag.
 -- Deletes all comments, compacts spaces, and calls specific functions when
 -- needed.
--- Outputs the parsed data in a table.
--- @tparam table output the output buffer
+-- Outputs the minified tag.
 -- @tparam striter iter the iterator
-local function handle_tag(output, iter)
+-- @treturn string the minified tag
+local function handle_tag(iter)
+	local output = {}
 	local char
 	-- Comment tag
 	if iter:peek(3) == "!--" then
@@ -164,6 +165,26 @@ local function handle_tag(output, iter)
 			--TODO
 		end
 	end
+	return table.concat(output)
+end
+
+--- Stitch the output table from minify.
+-- @tparam table tab the output table
+-- @treturn string the stitched output
+local function stitch_output(tab)
+	local output = {}
+	for i,v in ipairs(tab) do
+		if v[1] == "tag" then
+			output[#output+1] = v[2]
+		elseif v[1] == "char" then
+			output[#output+1] = v[2]
+		else
+			if tab[i-1][1] == "char" and tab[i+1][1] == "char" then
+				output[#output+1] = " "
+			end
+		end
+	end
+	return table.concat(output)
 end
 
 --- Minify an html string or file.
@@ -176,16 +197,17 @@ function m.minify(arg)
 	local char = iter:next()
 	while char do
 		if char == "<" then
-			handle_tag(output, iter)
+			output[#output+1] = {"tag", handle_tag(iter)}
 		elseif char:match(patterns.space) then
+			output[#output+1] = {"space"}
 			skip_space(iter)
 		else
-			output[#output+1] = char
+			output[#output+1] = {"char", char}
 		end
 		char = iter:next()
 	end
 
-	return table.concat(output)
+	return stitch_output(output)
 end
 
 return m
