@@ -1,3 +1,5 @@
+# ARCHIVED PROJECT, I won't be updating this (though I might revisit the idea in the future)
+
 # lua-minify
 
 lua-minify is a Lua library to minify html5 and css3. It's written in pure Lua
